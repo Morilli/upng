@@ -1000,7 +1000,6 @@ upng_error upng_decode(upng_t* upng)
 	 * verify general well-formed-ness */
 	while (chunk < upng->source.buffer + upng->source.size) {
 		unsigned long length;
-		const unsigned char *data;	/*the data in the chunk */
 
 		/* make sure chunk header is not larger than the total compressed */
 		if ((unsigned long)(chunk - upng->source.buffer + 12) > upng->source.size) {
@@ -1021,9 +1020,6 @@ upng_error upng_decode(upng_t* upng)
 			return upng->error;
 		}
 
-		/* get pointer to payload */
-		data = chunk + 8;
-
 		/* parse chunks */
 		if (upng_chunk_type(chunk) == CHUNK_IDAT) {
 			compressed_size += length;
@@ -1038,7 +1034,7 @@ upng_error upng_decode(upng_t* upng)
 	}
 
 	/* allocate enough space for the (compressed and filtered) image data */
-	compressed = (unsigned char*)malloc(compressed_size);
+	compressed = malloc(compressed_size);
 	if (compressed == NULL) {
 		SET_ERROR(upng, UPNG_ENOMEM);
 		return upng->error;
@@ -1067,7 +1063,7 @@ upng_error upng_decode(upng_t* upng)
 
 	/* allocate space to store inflated (but still filtered) data */
 	inflated_size = ((upng->width * (upng->height * upng_get_bpp(upng) + 7)) / 8) + upng->height;
-	inflated = (unsigned char*)malloc(inflated_size);
+	inflated = malloc(inflated_size);
 	if (inflated == NULL) {
 		free(compressed);
 		SET_ERROR(upng, UPNG_ENOMEM);
@@ -1087,7 +1083,7 @@ upng_error upng_decode(upng_t* upng)
 
 	/* allocate final image buffer */
 	upng->size = (upng->height * upng->width * upng_get_bpp(upng) + 7) / 8;
-	upng->buffer = (unsigned char*)malloc(upng->size);
+	upng->buffer = malloc(upng->size);
 	if (upng->buffer == NULL) {
 		free(inflated);
 		upng->size = 0;
@@ -1117,7 +1113,7 @@ static upng_t* upng_new(void)
 {
 	upng_t* upng;
 
-	upng = (upng_t*)malloc(sizeof(upng_t));
+	upng = malloc(sizeof(upng_t));
 	if (upng == NULL) {
 		return NULL;
 	}
@@ -1181,7 +1177,7 @@ upng_t* upng_new_from_file(const char *filename)
 	rewind(file);
 
 	/* read contents of the file into the vector */
-	buffer = (unsigned char *)malloc((unsigned long)size);
+	buffer = malloc((unsigned long)size);
 	if (buffer == NULL) {
 		fclose(file);
 		SET_ERROR(upng, UPNG_ENOMEM);

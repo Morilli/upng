@@ -1,5 +1,11 @@
+.idea/
+.vs/
+.vscode/
+
 png2tga
+png2tga.exe
 glview
+glview.exe
 *.o
 *.sh
 *.png
