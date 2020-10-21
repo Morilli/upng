@@ -47,15 +47,15 @@ int main(int argc, char** argv) {
         fprintf(fh, "%c%c%c%c%c", 0, 0, 0, 0, 0);
         fprintf(fh, "%c%c%c%c%c%c%c%c%c%c", 0, 0, 0, 0, LO(width), HI(width), LO(height), HI(height), upng_get_bpp(upng), upng_get_bitdepth(upng));
 
+        const unsigned char* buffer = upng_get_buffer(upng);
         if (upng_get_format(upng) == UPNG_RGBA8) {
             for (y = 0; y != height; ++y) {
                 for (x = 0; x != width; ++x) {
-                    for (d = 1; d != depth; ++d) {
-                        // printf("accessing index %d\n", (height - y - 1) * width * depth + x * depth + (depth - d - 1));
-                        putc(upng_get_buffer(upng)[(height - y - 1) * width * depth + x * depth + (depth - d - 1)], fh);
-                    }
-                    // printf("accessing index %d\n", (height - y - 1) * width * depth + x * depth + (depth - 1));
-                    putc(upng_get_buffer(upng)[(height - y - 1) * width * depth + x * depth + (depth - 1)], fh);
+                    // printf("accessing index %d\n", (height - y - 1) * width * depth + x * depth + 2);
+                    putc(buffer[(height - y - 1) * width * depth + x * depth + 2], fh);
+                    putc(buffer[(height - y - 1) * width * depth + x * depth + 1], fh);
+                    putc(buffer[(height - y - 1) * width * depth + x * depth], fh);
+                    putc(buffer[(height - y - 1) * width * depth + x * depth + 3], fh);
                 }
             }
         } else {
@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
                 for (x = 0; x != width; ++x) {
                     for (d = 0; d != depth; ++d) {
                         // printf("accessing index %d\n", (height - y - 1) * width * depth + x * depth + (depth - d - 1));
-                        putc(upng_get_buffer(upng)[(height - y - 1) * width * depth + x * depth + (depth - d - 1)], fh);
+                        putc(buffer[(height - y - 1) * width * depth + x * depth + (depth - d - 1)], fh);
                     }
                 }
             }
